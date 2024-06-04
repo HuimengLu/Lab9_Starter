@@ -1,5 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "23f2061ba5f648a38d684188873abd02"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
+
+TrackJS.track('Testing TrackJS!');        
 
 <head>
   <meta charset="UTF-8">
@@ -88,6 +97,13 @@
   </main>
 
   <script>
+    class CustomError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = 'CustomError';
+      }
+    }
+
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -96,12 +112,103 @@
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
       output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+
+      try {
+        if (!firstNum || !secondNum) {
+          throw new CustomError('Please enter both numbers.');
+        }
+        if((secondNum === '0') && (operator === '/')){
+          throw new Error('division by 0 not possible');
+        }
+
+        // Perform calculation
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      } catch (error) {
+        // Handle errors
+        if (error instanceof CustomError) {
+          console.error(error.message);
+          output.innerHTML = 'Error: ' + error.message;
+        } else {
+          console.error('Unexpected error:', error);
+          output.innerHTML = 'Unexpected error occurred.';
+        }
+      }
     });
+
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
     // You may move this JS to another file if you wish
+    errorBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        switch (btn.textContent.trim()) {
+          case 'Console Log':
+            console.log('Console log message.');
+            break;
+          case 'Console Error':
+            console.error('Console error message.');
+            break;
+          case 'Console Count':
+            console.count('Counter');
+            break;
+          case 'Console Warn':
+            console.warn('Console warning message.');
+            break;
+          case 'Console Assert':
+            console.assert(1 === 2, 'Assertion failed!');
+            break;
+          case 'Console Clear':
+            console.clear();
+            break;
+          case 'Console Dir':
+            console.dir(document.body);
+            break;
+          case 'Console dirxml':
+            console.dirxml(document);
+            break;
+          case 'Console Group Start':
+            console.group('Group');
+            break;
+          case 'Console Group End':
+            console.groupEnd();
+            break;
+          case 'Console Table':
+            console.table([
+              { name: 'John', age: 17 },
+              { name: 'Doe', age: 25 }
+            ]);
+            break;
+          case 'Start Timer':
+            console.time('Timer');
+            break;
+          case 'End Timer':
+            console.timeEnd('Timer');
+            break;
+          case 'Console Trace':
+            function one(){
+              two();
+            }
+            function two(){
+              console.trace();
+            }
+            one();
+            break;
+          case 'Trigger a Global Error':
+            nonexistentFunction();
+            break;
+          default:
+            console.log('Case not implemented.');
+            break;
+        }
+      });
+
+      // Global error handler
+      window.onerror = function(message, source, lineno, colno, error) {
+        console.error('Global Error:', message);
+      }
+    });
+
   </script>
 </body>
 
