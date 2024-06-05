@@ -162,10 +162,10 @@ TrackJS.track('Testing TrackJS!');
             console.clear();
             break;
           case 'Console Dir':
-            console.dir(document.body);
+            console.dir(event.target);
             break;
           case 'Console dirxml':
-            console.dirxml(document);
+            console.dirxml(event.target);
             break;
           case 'Console Group Start':
             console.group('Group');
